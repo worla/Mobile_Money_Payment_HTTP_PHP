@@ -1,13 +1,25 @@
 <?php
 
-ini_set('max_execution_time', 120); //300 seconds = 5 minutes
+
+//initialise the maximum execution time to 2 minutes to allow the process to finish
+ini_set('max_execution_time', 120); //120 seconds = 2 minutes
+
 
 
 $url = "https://app.mpowerpayments.com/api/v1/direct-mobile/charge";
 
+// $settings = parse_ini_file("sample.ini");
+
+// $master_key = $settings["MP-Master-Key"];
+// $private_key = $se
+// $
+
+// $api_version=$settings["slydepay.api_version"];
+
+
 $data = array(
-	'customer_name' => 'worla',
-	'customer_phone' => '0546652999',
+	'customer_name' => 'worla',  //this should be from the form that the user will fill, so using GET or POST to get the name
+	'customer_phone' => '0546652999', //this should be from the form that the user will fill, so using GET or POST to get the name
 	'customer_email' => 'winfredlen@gmail.com',
 	'wallet_provider' => 'MTN',
 	'merchant_name' => 'Creators Hub',
@@ -26,9 +38,9 @@ curl_setopt($ch, CURLOPT_TIMEOUT, 400);
 // curl_setopt($ch, CURLOPT_TIMEOUT, 20);
 curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 	'Content-Type: application/json',
-	'MP-Master-Key: ad5c6d67-3a32-40d0-944c-6beb0485d20c',
-	'MP-Private-Key: live_private_Ldp6gVtf7dsG8Q_3UxmRejerYHM',
-	'MP-Token: 576bfc8ad14a51e42309')
+	'MP-Master-Key: arj67js7-g45n-1o1k-099t-5s7d8g8g0a73nx',
+	'MP-Private-Key: live_private_Hri2vBoqen5alM9c_4IvbbBqweersdFGH',
+	'MP-Token: 123asdt4ki85g12m9084r')
 );
 
 
@@ -42,15 +54,22 @@ $result = (string)curl_exec($ch);
 $json = $result;
 $obj = json_decode($json);
 
-// print $obj->{'token'};
+
+
+/*
+Due to the the nature of mobile money transactions, we need to get the token from the transaction 
+to ascertain whether the transaction was succesful, pending or cancelled
+
+*/
 
 $token = $obj->{'token'};
 
 print($token);
 
-// print_r($result);
 curl_close($ch);
 
+
+//sleep for 60 seconds and give the user enough time to accept the transaction and enter their mobile money pi
 sleep(60);
 
 
@@ -58,11 +77,10 @@ sleep(60);
 
 
 
+/*
+after getting the token, we now use  the token to perform a new post request request
 
-
-
-
-
+*/
 
 
 
@@ -86,9 +104,9 @@ curl_setopt($new_ch, CURLOPT_TIMEOUT, 400);
 // curl_setopt($ch, CURLOPT_TIMEOUT, 20);
 curl_setopt($new_ch, CURLOPT_HTTPHEADER, array(
 	'Content-Type: application/json',
-	'MP-Master-Key: ad5c6d67-3a32-40d0-944c-6beb0485d20c',
-	'MP-Private-Key: live_private_Ldp6gVtf7dsG8Q_3UxmRejerYHM',
-	'MP-Token: 576bfc8ad14a51e42309')
+	'MP-Master-Key: arj67js7-g45n-1o1k-099t-5s7d8g8g0a73nx',
+	'MP-Private-Key: live_private_Hri2vBoqen5alM9c_4IvbbBqweersdFGH',
+	'MP-Token: 123asdt4ki85g12m9084r')
 );
 
 
@@ -103,13 +121,11 @@ $new_result = (string)curl_exec($new_ch);
 $new_json = $new_result;
 $new_obj = json_decode($new_json);
 
-// print $obj->{'token'};
 
 $tx_status = $new_obj->{'tx_status'};
 
 print($tx_status);
 
-// print_r($new_obj);
 
 if ($tx_status == "complete"){echo "Weldone, you have successfully completed payment";}
 else 
