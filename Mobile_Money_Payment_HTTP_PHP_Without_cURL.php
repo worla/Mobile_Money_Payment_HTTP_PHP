@@ -23,10 +23,3 @@ $result = file_get_contents($url, false, $context);
 
 var_dump($result);
 ?>
-
-<form>
-  First name:<br>
-  <input type="text" name="firstname"><br>
-  Last name:<br>
-  <input type="text" name="lastname">
-</form>
